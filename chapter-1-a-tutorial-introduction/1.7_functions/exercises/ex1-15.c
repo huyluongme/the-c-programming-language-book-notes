@@ -1,5 +1,5 @@
 /*
- * File name:   ex1-14.c
+ * File name:   ex1-15.c
  * Author:      Huy Luong Duc <huyluongme.cs@gmail.com>
  * Date:        Jun 14, 2026
  *
