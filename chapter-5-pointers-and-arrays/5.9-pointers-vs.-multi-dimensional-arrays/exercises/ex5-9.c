@@ -1,12 +1,13 @@
 /*
- * File name:   ex5-8.c
+ * File name:   ex5-9.c
  * Author:      Huy Luong Duc <huyluongme.cs@gmail.com>
- * Date:        Aug 19, 2026
+ * Date:        Aug 22, 2026
  *
  * [SECOND EDITION] The C Programming Language
  * by Brian W.Kernighan and Dennis M.Ritchie
  *
- * Exercise 5-8. There is no error checking in day_of_year or month_day. Remedy this defect. 
+ * Exercise 5-9. Rewrite the routines day_of_year and month_day with pointers
+ * instead of indexing.
  */
 
 #include <stdio.h>
@@ -62,25 +63,28 @@ static char daytab[2][13] = {
 /* day_of_year: set day of year from month & day; returns -1 on invalid input */
 int day_of_year(int year, int month, int day)
 {
-    int i, leap;
+    int leap;
+    char *p;
 
     if (year < 1 || month < 1 || month > 12)
         return -1;
 
     leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    p = *(daytab + leap);
 
-    if (day < 1 || day > daytab[leap][month])
+    if (day < 1 || day > *(p + month))
         return -1;
 
-    for (i = 1; i < month; i++)
-        day += daytab[leap][i];
+    while (--month)
+        day += *++p;
     return day;
 }
 
 /* month_day: set month, day from day of year; returns 0 on success, -1 on invalid input */
 int month_day(int year, int yearday, int *pmonth, int *pday)
 {
-    int i, leap, maxdays;
+    int leap, maxdays;
+    char *p;
 
     if (year < 1 || pmonth == NULL || pday == NULL)
         return -1;
@@ -91,9 +95,10 @@ int month_day(int year, int yearday, int *pmonth, int *pday)
     if (yearday < 1 || yearday > maxdays)
         return -1;
 
-    for (i = 1; yearday > daytab[leap][i]; i++)
-        yearday -= daytab[leap][i];
-    *pmonth = i;
+    p = *(daytab + leap);
+    while (yearday > *++p)
+        yearday -= *p;
+    *pmonth = p - *(daytab + leap);
     *pday = yearday;
     return 0;
 }
